@@ -1,0 +1,33 @@
+/*// Image size after Kernel Mask
+		//int sum = 0;
+		int out_w = (im4.w - kernel_w + 2 * padding) + 1;// stride ekle
+		int out_h = (im4.h - kernel_h + 2 * padding) + 1;// stride ekle
+
+		image temp = make_empty_image(out_w, out_h, 1);
+		int psw=im4.w;
+		int bufpos;
+		int bufpos_kernel;
+		// Loop for write sum to data
+		for (int row = 0; row < temp.h; row++)
+		{
+			for (int col = 0; col < temp.w; col++)
+			{	
+				sum = 0;
+				//1D image data Matrix
+				bufpos = row * psw + col;
+					
+					//Loop for Kernel Masking
+					for (int krow = 0; krow < kernel_h; krow++)
+					{
+						bufpos += psw * krow;
+						for (int kcol = 0; kcol < kernel_w; kcol++)
+						{	
+							//Buffer for Kernel Matrix
+							bufpos_kernel = krow * kernel_w + kcol;
+							sum += mask[bufpos_kernel] * im4.data[bufpos+kcol];
+						}
+					}
+				bufpos = row * psw + col;
+				temp.data[bufpos] = sum;
+			}
+		}*/
