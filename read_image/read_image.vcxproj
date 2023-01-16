@@ -123,16 +123,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\image-processing-goruntuisleme--master\image-processing-goruntuisleme--master\humoments.cpp" />
     <ClCompile Include="Form1.cpp" />
+    <ClCompile Include="humoments.cpp" />
     <ClCompile Include="image.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\image-processing-goruntuisleme--master\image-processing-goruntuisleme--master\humoments.h" />
     <ClInclude Include="Form1.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="humoments.h" />
     <ClInclude Include="image.h" />
     <ClInclude Include="stb_image.h" />
   </ItemGroup>

@@ -32,6 +32,8 @@ image FeatureExtraction(Boxes* bounding,int* tagged_data ,int box_num,image im);
 int** Histogram(image im );
 int* K_means(int** hist,int T_num,int c);
 image Convolition(image im, int* mask, const int mask_w, const int mask_h,int pad);
+image Erosion(image im);
+image Dilation(image im);
 int Euclidean_distance(int space_size, int* x,int buffer_x, int* y,int buffer_y);
 int Euclidean_distance(int space_size, int* x, int buffer_x, int y);
 float Euclidean_Distance(float* arr1, float* arr2, int size);

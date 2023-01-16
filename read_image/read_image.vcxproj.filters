@@ -24,8 +24,8 @@
     <ClCompile Include="image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\image-processing-goruntuisleme--master\image-processing-goruntuisleme--master\humoments.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="humoments.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -38,7 +38,7 @@
     <ClInclude Include="image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\image-processing-goruntuisleme--master\image-processing-goruntuisleme--master\humoments.h">
+    <ClInclude Include="humoments.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -4,7 +4,7 @@
 #include "stb/include/stb_image.h"
 #include <iostream>
 #include <vector>
-#include "../../read_image/read_image/humoments.h"
+#include "../../Seed detection/read_image/humoments.h"
 /*
 Ýmage segmentation -- Object Detection
 -> Edge-Based Algorithm
@@ -209,10 +209,10 @@ image gray_to_binary_image(image im, int* T_values) {
 	for (int i = 0; i < im.w * im.h; i++)
 	{
 		int distance = labs(im.data[i] - T_values[0]);
-		if (distance < labs(im.data[i]- T_values[1])) im.data[i] = 0;
+		if (distance < labs(im.data[i]- T_values[1])) im.data[i] = 255;
 		else
 		{
-			im.data[i] = 255;
+			im.data[i] = 0;
 		}
 	}
 	return im;
@@ -357,12 +357,14 @@ int Euclidean_distance(int space_size, int* x, int buffer_x, int y) {
 }
 float Euclidean_Distance(float* arr1, float* arr2, int size)
 {
-	float temp = 0;
-	for (int i = 0;i < size;i++)
+	float distance = 0;
+	float sum = 0;
+	for (int i = 0; i < size; i++)
 	{
-		temp += pow((arr1[i] - arr2[i]), 2);
+		sum += pow((arr1[i] - arr2[i]), 2);
 	}
-	return sqrt(temp);
+	distance = sqrt(sum);
+	return distance;
 }
 int* Connectivity(image im) {//8 komþu deðere göre connectivity
 
@@ -438,9 +440,9 @@ int* Connectivity(image im) {//8 komþu deðere göre connectivity
 	}
 	printf("counter: %d \n collision ::%d\n", counter, num);//
 	num = 0;
-	for (int row = im.h; row > 1; --row)
+	for (int row = im.h-1; row > 1; --row)
 	{
-		for (int col = im.w; col > 0; --col)
+		for (int col = im.w-1; col > 0; --col)
 		{
 			int bufpos = row * psw + col;
 			int bufpos_rowup = (row - 1) * psw + col;
@@ -796,14 +798,17 @@ image ConnectivityColor(image im) {//8 komþu deðere göre connectivity
 image FeatureExtraction(Boxes* Bounding,int* tagged_data, int box_num, image im) {
 
 
-	float momentvalue[7];
-	float mercimek[7] = { 0.165087,0.00170739,0.00708642,0.000142945,2.59475e-07,-0.00802825,1.58015e-07 };
-	float cekirdek[7] = { 0.234149,0.0277601,1.0764,0.237477,0.105781,-0.196802,-0.0101849 };
-	float eriste[7] = { 1.00171,0.997429,22.9338,19.5061,761.183,19.5376,-11.6029 };
-	float fasulye[7] = { 0.190439,0.0107762,0.0305301,0.00227828,3.78958e-05,0.00298993,2.54525e-05 };
-	float mýsýr[7] = { 0.164747,0.000834593,0.0931484,0.00139435,2.86284e-06,-0.0279052,5.64801e-06 };
-	float nohut[7] = { 0.166182,0.00138244,0.156274,0.0031489,0.000338772,-0.0143759,-0.000127367 };
-	float para[7] = { 0.16244,0.00104876,0.0017776,1.98324e-05,-3.45616e-09,-0.00703107,9.6867e-10 };
+	float momentvalue[10];
+	float mercimek[7] = {0.170478,0.001010,0.036326,0.000646,-0.000003,-0.018029,0.000002};
+	float cekirdek[7] = { 0.255947,0.001911,0.011979,0.000331,-0.000001,0.006241,-0.000000 };
+	float makarna[7] = { 0.345055,0.055391,0.001759,0.000737,-0.000002,-0.018882,0.000000 };
+	float fasulye[7] = { 0.168386,0.002833,0.003957,0.000061,-0.000000,0.015165,-0.000000 };
+	float mýsýr[7] = { 0.231851, 0.002633,0.285513,0.007776,-0.000627,-0.115932,0.000083 };
+	float nohut[7] = { 0.200273,0.005110,0.011055,0.000655,0.000001,-0.003157,-0.000001 };
+	float para[7] = { 0.159233,0.000001, 0.000692,0.000011,0.000000,-0.004146,0.000000 };
+	float uzum[7] = { 0.225410,0.000117,0.011057,0.003847,0.000025,0.072535, 0.000000 };
+	float arpa[7] = { 0.358810,0.025606,0.006883,0.002125,0.000001,-0.014204,0.000005 };
+	float fýndýk[7] = { 0.190720,0.002973,0.017637,0.005574,-0.000013,0.074616,0.000055 };
 
 
 	int psw = im.w;
@@ -829,20 +834,27 @@ image FeatureExtraction(Boxes* Bounding,int* tagged_data, int box_num, image im)
 		obje.calcInvariantMoments();
 
 		float* moments = obje.getInvariantMoments();
-
+		/*for (int i = 0; i < 7; i++)
+		{
+			printf("\n %d moments: %f\n", i, moments[i]);
+		}
+		printf("\n---------\n");*/
 		//nesnenin moment deðeri ile diðer momenti belli olan nesnelerin momentleri oklid'e göre tek tek kýyaslanýr bir diziye atýlýr 
 		momentvalue[0] = Euclidean_Distance(moments, mercimek, 7);
-		momentvalue[1] = Euclidean_Distance(moments, eriste, 7);
+		momentvalue[1] = Euclidean_Distance(moments, makarna, 7);
 		momentvalue[2] = Euclidean_Distance(moments, nohut, 7);
 		momentvalue[3] = Euclidean_Distance(moments, fasulye, 7);
 		momentvalue[4] = Euclidean_Distance(moments, cekirdek, 7);
 		momentvalue[5] = Euclidean_Distance(moments, mýsýr, 7);
 		momentvalue[6] = Euclidean_Distance(moments, para, 7);
+		momentvalue[7] = Euclidean_Distance(moments, uzum, 7);
+		momentvalue[8] = Euclidean_Distance(moments, arpa, 7);
+		momentvalue[9] = Euclidean_Distance(moments, fýndýk, 7);
 		
 		//daha önceden bilinen hangi nesneye daha yakýnsa o nesneyi yakýn olan olarak tanimlariz
 		float byComparison = 10000000;
 		int object = 0;
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			if (momentvalue[i] < byComparison)
 			{
@@ -878,6 +890,19 @@ image FeatureExtraction(Boxes* Bounding,int* tagged_data, int box_num, image im)
 		{
 			r = 0;g = 255;b = 100;
 		}
+		else if (object == 7)
+		{
+			r = 255;g = 150;b = 150;
+		}
+		else if (object == 8)
+		{
+			r = 0;g = 0;b = 0;
+		}
+		else if (object == 9)
+		{
+			r = 100;g = 255;b = 100;
+		}
+
 		
 		int bufpos = 0;
 		for (int row = Bounding[i].top; row < Bounding[i].bottom; row++)
@@ -895,6 +920,129 @@ image FeatureExtraction(Boxes* Bounding,int* tagged_data, int box_num, image im)
 	}
 	return im_out;
 }
+//image FeatureExtraction(Boxes* Bounding, int* tagged_data, int box_num, image im) {
+//
+//
+//	float momentvalue[7];
+//	/*float mercimek[7] = {0.170478,0.001010,0.036326,0.000646,-0.000003,-0.018029,0.000002};
+//	float cekirdek[7] = {0.255947,0.001911,0.011979,0.000331,-0.000001,0.006241,-0.000000 };
+//	float makarna[7] = {0.345055,0.055391,0.001759,0.000737,-0.000002,-0.018882,0.000000 };
+//	float fasulye[7] = {0.168386,0.002833,0.003957,0.000061,-0.000000,0.015165,-0.000000 };
+//	float mýsýr[7] = { 0.231851, 0.002633,0.285513,0.007776,-0.000627,-0.115932,0.000083 };
+//	float nohut[7] = { 0.200273,0.005110,0.011055,0.000655,0.000001,-0.003157,-0.000001};
+//	float para[7] = {0.159233,0.000001, 0.000692,0.000011,0.000000,-0.004146,0.000000 };
+//	float uzum[7] = {0.225410,0.000117,0.011057,0.003847,0.000025,0.072535, 0.000000 };
+//	float arpa[7] = {0.358810,0.025606,0.006883,0.002125,0.000001,-0.014204,0.000005 };
+//	float fýndýk[7] = {0.190720,0.002973,0.017637,0.005574,-0.000013,0.074616,0.000055 };*/
+//
+//	float** train_data = new float*[box_num]; 
+//	for (int i = 0; i < box_num; i++)
+//	{
+//		train_data[i] = new float[7];// Burada her bir objenin moment deðerleri için bir dizi oluþturuldu
+//	}
+//
+//	int psw = im.w;
+//	image im_out = make_empty_image(im.w, im.h, 3);
+//	for (int i = 0; i < im.w * im.h * 3; i++)
+//	{
+//		im_out.data[i] = 255;
+//	}
+//	for (int i = 0; i < box_num; i++)
+//	{
+//		int* obj_data = new int[(Bounding[i].bottom - Bounding[i].top + 1) * (Bounding[i].right - Bounding[i].left + 1)];
+//		int h = 0;
+//		for (int row = Bounding[i].top; row < Bounding[i].bottom; row++)
+//		{
+//			for (int col = Bounding[i].left; col < Bounding[i].right; col++)
+//			{
+//				obj_data[h] = tagged_data[psw * row + col];// Burada Bounding box içindeki verini obj_data dizisine kopyalandý
+//				h++;
+//			}
+//		}
+//		HuMoments obje(obj_data, (Bounding[i].bottom - Bounding[i].top + 1), (Bounding[i].right - Bounding[i].left + 1));
+//		obje.calcOrgins();
+//		obje.calcInvariantMoments();
+//
+//		train_data[i] = obje.getInvariantMoments();
+//		//nesnenin moment deðeri ile diðer momenti belli olan nesnelerin momentleri oklid'e göre tek tek kýyaslanýr bir diziye atýlýr 
+//		/*momentvalue[0] = Euclidean_Distance(moments, mercimek, 7);
+//		momentvalue[1] = Euclidean_Distance(moments, eriste, 7);
+//		momentvalue[2] = Euclidean_Distance(moments, nohut, 7);
+//		momentvalue[3] = Euclidean_Distance(moments, fasulye, 7);
+//		momentvalue[4] = Euclidean_Distance(moments, cekirdek, 7);
+//		momentvalue[5] = Euclidean_Distance(moments, mýsýr, 7);
+//		momentvalue[6] = Euclidean_Distance(moments, para, 7);*/
+//
+//		////daha önceden bilinen hangi nesneye daha yakýnsa o nesneyi yakýn olan olarak tanimlariz
+//		//float byComparison = 10000000;
+//		//int object = 0;
+//		//for (int i = 0; i < 7; i++)
+//		//{
+//		//	if (momentvalue[i] < byComparison)
+//		//	{
+//		//		byComparison = momentvalue[i];
+//		//		object = i;		//7 nesneden hangisine daha yakinsa ona setlenir
+//		//	}
+//		//}
+//		//int r, g, b;
+//		//if (object == 0) {
+//		//	r = 0;g = 0;b = 255;
+//		//}
+//		//else if (object == 1)
+//		//{
+//		//	r = 255;g = 150;b = 255;
+//		//}
+//		//else if (object == 2)
+//		//{
+//		//	r = 0;g = 255;b = 0;
+//		//}
+//		//else if (object == 3)
+//		//{
+//		//	r = 255;g = 0;b = 0;
+//		//}
+//		//else if (object == 4)
+//		//{
+//		//	r = 255;g = 150;b = 0;
+//		//}
+//		//else if (object == 5)
+//		//{
+//		//	r = 0;g = 150;b = 255;
+//		//}
+//		//else if (object == 6)
+//		//{
+//		//	r = 0;g = 255;b = 100;
+//		//}
+//
+//		//int bufpos = 0;
+//		//for (int row = Bounding[i].top; row < Bounding[i].bottom; row++)
+//		//{
+//		//	for (int col = Bounding[i].left; col < Bounding[i].right; col++)
+//		//	{
+//		//		bufpos = row * psw * 3 + col * 3;
+//		//		if (tagged_data[psw * row + col] != 0) {
+//		//			im_out.data[bufpos] = r;
+//		//			im_out.data[bufpos + 1] = g;
+//		//			im_out.data[bufpos + 2] = b;
+//		//		}
+//		//	}
+//		//}
+//	}
+//	float sum = 0;
+//	
+//	for (int moment = 0; moment < 7; moment++)
+//	{
+//		for (int i = 0; i < box_num; i++)
+//		{
+//			sum += train_data[i][moment]; //Burada ayný sýnýfta olan objelerin moment deðerlerinin ortalamasýnýn alýnmasý amaçlandý
+//		}
+//		momentvalue[moment] = sum / box_num;
+//		printf("\n moment : %f", momentvalue[moment]);
+//		sum = 0;
+//		
+//	}
+//
+//	return im_out;
+//}
 
 
 //int* K_means(int* hist, int T_num) { //istenilen kadar T deðeri bulan k-meansfonksiyonu

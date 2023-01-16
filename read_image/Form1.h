@@ -1,7 +1,7 @@
 #pragma once
-#include <atlstr.h>
 #include <iostream>
 #include "image.h"
+#include <atlstr.h>
 
 
 namespace read_image {
@@ -416,11 +416,10 @@ private: System::Void objectDetectionToolStripMenuItem_Click(System::Object^ sen
 		im = gray_to_binary_image(im, T_values);
 		int* tagged_data = Connectivity(im);
 		Boxes* bounding = bounding_box(tagged_data,im);
-		//ShowGrayImages(im);
-		
-		image im3 = make_empty_image(im.w, im.c, 3);
-		im3 = FeatureExtraction(bounding,tagged_data,bounding->obj_num, im);
-		ShowRGBImages(im3);
+		ShowGrayImages(im);
+		//image im3 = make_empty_image(im.w, im.c, 3);
+		//im3 = FeatureExtraction(bounding,tagged_data,bounding->obj_num, im);
+		//ShowRGBImages(im3);
 		drawB_box(bounding,bounding->obj_num);
 
 	}// Object Detection Bounding box
@@ -437,7 +436,7 @@ private: System::Void gaussianBlurToolStripMenuItem_Click(System::Object^ sender
 		im = rgb_to_gray(im.w, im.h, im.data);
 		const int kernel_w = 3;
 		const int kernel_h = 3;
-		int padding = 7;
+		int padding = 2;
 		int* mask;
 		//Mask Array 1D
 		mask = new int[kernel_w * kernel_h];
@@ -465,7 +464,7 @@ private: System::Void objectDetection2ToolStripMenuItem_Click(System::Object^ se
 		im = rgb_to_gray(im.w, im.h, im.data);
 		int** im_hist = Histogram(im);
 		int* T_values;
-		int T_number = 2;
+		int T_number = 8;
 		T_values = K_means(im_hist, T_number, im.c);
 		im = gray_to_binary_image(im, T_values);
 		im = ConnectivityColor(im);
